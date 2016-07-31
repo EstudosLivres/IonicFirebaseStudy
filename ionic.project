@@ -1,0 +1,11 @@
+{
+  "name": "IonicFirebaseStudy",
+  "app_id": "",
+  "email": "ton.garcia.jr@gmail.com",
+  "package_name": "IonicFirebaseStudy",
+  "gulpStartupTasks": [
+      "jade",
+      "sass",
+      "watch"
+    ]
+}
