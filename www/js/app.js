@@ -28,8 +28,18 @@ angular.module('starter', ['ionic', 'firebase', 'starter.controllers'])
     .state('app', {
     url: '/app',
     abstract: true,
-    templateUrl: 'templates/menu.html',
+    templateUrl: 'templates/layouts/menu.html',
     controller: 'AppCtrl'
+  })
+
+  .state('app.login', {
+    url: '/login',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/login.html',
+        controller: 'LoginCtrl'
+      }
+    }
   })
 
   .state('app.search', {
@@ -69,5 +79,5 @@ angular.module('starter', ['ionic', 'firebase', 'starter.controllers'])
     }
   });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/playlists');
+  $urlRouterProvider.otherwise('/app/login');
 });

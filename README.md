@@ -1,3 +1,47 @@
+Firebase Auth
+=============
+
+The firebase use the Object ``` $firebaseAuth ``` to create, sign in and sign out users, even with OAuth.
+To use Firebase Auth it must be set in the Firebase console.
+
+
+<br>
+### Session Management
+
+
+##### Create an user
+To create user we just need ```e-mail``` & ```password``` by ```createUser``` method, and add it just like it ref (referring the Firebase app)
+```javascript
+   var ref = new Firebase("https://<YOUR-FIREBASE-APP>.firebaseio.com");
+   ref.createUser({
+     email    : "bobtony@firebase.com",
+     password : "correcthorsebatterystaple"
+   }, function(error) {
+     // Handle error
+   }).then(function(authData){
+    // IMPORTANT: it is necessary to create it then, on the Doc it say that the catch return the authData, but it is not true
+    if(authData == undefined) return;
+   });
+```
+
+##### Sign an user
+To sign an user we just need ```e-mail``` & ```password``` by ```authWithPassword``` method, and add it just like it ref (referring the Firebase app).
+```javascript
+  var ref = new Firebase("https://<YOUR-FIREBASE-APP>.firebaseio.com");
+  ref.authWithPassword({
+    email    : "bobtony@firebase.com",
+    password : "correcthorsebatterystaple"
+  }, function(error, authData) {
+    // error logic
+  }).then(function(authData){
+    // IMPORTANT: it is necessary to create it then, on the Doc it say that the catch return the authData, but it is not true
+    if(authData == undefined) return;
+  });;
+```
+
+
+
+
 Ionic App Base
 =====================
 
