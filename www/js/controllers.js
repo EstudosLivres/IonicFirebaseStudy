@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('LoginCtrl', function($scope, $rootScope, $ionicSideMenuDelegate, $ionicLoading, $state) {
+.controller('LoginCtrl', function($scope, $rootScope, $ionicViewService, $ionicSideMenuDelegate, $ionicLoading, $state) {
   // Prevent swipe side menu from Login
   $ionicSideMenuDelegate.canDragContent(false);
 
@@ -25,6 +25,12 @@ angular.module('starter.controllers', [])
         $ionicLoading.hide();
         if(response == undefined) return;
         $rootScope.user = firebase.auth().currentUser;
+
+        // Prevent back button after login
+        $ionicViewService.nextViewOptions({
+          disableAnimate: true,
+          disableBack: true
+        });
 
         // Go to signed page
         $state.go('app.playlists');
