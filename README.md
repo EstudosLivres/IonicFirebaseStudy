@@ -41,29 +41,104 @@ To sign an user we just need ```e-mail``` & ```password``` by ```authWithPasswor
 
 
 
+<br>
+### Add items to user
 
-Ionic App Base
-=====================
-
-A starting project for Ionic that optionally supports using custom SCSS.
-
-## Using this project
-
-We recommend using the [Ionic CLI](https://github.com/driftyco/ionic-cli) to create new Ionic projects that are based on this project but use a ready-made starter template.
-
-For example, to start a new Ionic project with the default tabs interface, make sure the `ionic` utility is installed:
-
-```bash
-$ npm install -g ionic
+##### Simple Real-Time Array
+To add & sync objects we use $array ``` $firebaseArray ```
+*If it throws an error like: "permission_denied: Client doesn't have permission to access the desired data", it can be:
+ * The rules are not set properly
+ * The user is not assigned as signed for the request
+```javascript
+  .factory("Playlists", function($firebaseArray) {
+    var itemsRef = new Firebase("https://<YOUR-FIREBASE-APP>.firebaseio.com/items");
+    return $firebaseArray(itemsRef);
+  })
 ```
 
-Then run: 
 
-```bash
-$ ionic start myProject tabs
-```
+<br>
+### IMPORTANT mentions for AngularFire
 
-More info on this can be found on the Ionic [Getting Started](http://ionicframework.com/getting-started) page and the [Ionic CLI](https://github.com/driftyco/ionic-cli) repo.
-
-## Issues
-Issues have been disabled on this repo, if you do find an issue or have a question consider posting it on the [Ionic Forum](http://forum.ionicframework.com/).  Or else if there is truly an error, follow our guidelines for [submitting an issue](http://ionicframework.com/submit-issue/) to the main Ionic repository.
+1. AngularFire is also not ideal for synchronizing deeply nested collections inside of collections. In general, deeply nested collections [should typically be avoided](https://www.firebase.com/docs/web/guide/structuring-data.html#section-denormalizing-data) in distributed systems.
+2. The primary purpose of AngularFire is to __manage synchronized data__, which is exposed through the ```$firebaseObject``` and ```$firebaseArray```.
+3. __MOST IMPORTANT__: The AngularFire doesn't have a callback defined by the dev, it is a AngularFire inside feature. To print it value we doesn't use console, use angular json filter.
+  ```javascript
+    var ref = new Firebase("https://<YOUR-FIREBASE-APP>.firebaseio.com");
+    $scope.data = $firebaseObject(ref);
+    // The obj variable will appear to be empty here and won't contain any remote data,
+    // because the request to the server has not returned when we reach this line.
+    console.log($scope.data);
+  ```
+  ```html
+    <pre>{{ data | json }}</pre>
+  ```
+4. Sometimes we need just the Firebase web, not the AngularFire:
+  ```javascript
+    var ref = new Firebase("https://<YOUR-FIREBASE-APP>.firebaseio.com");
+    // We don't always need AngularFire!
+    //var obj = $firebaseObject(ref);
+    // For example, if we just want to increment a counter, which we aren't displaying locally,
+    // we can just set it using the SDK
+    ref.child("foo/counter").transaction(function(currentValue) {
+      return (currentValue || 0) + 1;
+    });
+  ```
+5. If using the FirebaseWeb SDK (not AngularFire) sync: 
+  ```javascript
+    var ref = new Firebase("https://<YOUR-FIREBASE-APP>.firebaseio.com");
+    ref.on("value", function(snapshot) {
+      // This isn't going to show up in the DOM immediately, because
+      // Angular does not know we have changed this in memory.
+      // $scope.data = snapshot.val();
+      // To fix this, we can use $scope.$apply() to notify Angular that a change occurred.
+      $scope.$apply(function() {
+        $scope.data = snapshot.val();
+      });
+    });
+  ```
+6. When ``` $firebaseArray ``` might be used:
+  Synchronized arrays should be used for any list of objects that will be sorted, iterated, and which have unique IDs. The synchronized array assumes that items are added using [$add()](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-addnewdata), and that they will therefore be keyed using Firebase [push IDs](https://www.firebase.com/docs/web/guide/saving-data.html#section-push).
+  We create a synchronized array with the $firebaseArray service. The array is sorted [in the same order](https://www.firebase.com/docs/web/guide/retrieving-data.html#section-ordered-data) as the records on the server. In other words, we can pass a [query](https://www.firebase.com/docs/web/guide/retrieving-data.html#section-queries) into the synchronized array, and the records will be sorted according to query criteria.
+  While the array isn't technically read-only, it has some special requirements for modifying the structure (removing and adding items) which we will cover below.
+  ```javascript
+    // define our app and dependencies (remember to include firebase!)
+    var app = angular.module("sampleApp", ["firebase"]);
+    // inject $firebaseArray into our controller
+    app.controller("ProfileCtrl", ["$scope", $firebaseArray",
+      function($scope, $firebaseArray) {
+        // REF to firebase DB messages list (receipt)
+        var messagesRef = new Firebase("https://<YOUR-FIREBASE-APP>.firebaseio.com/messages"); 
+        // download the data from a Firebase reference into a (pseudo read-only) array
+        // all server changes are applied in realtime
+        $scope.messages = $firebaseArray(messagesRef);
+        // create a query for the most recent 25 messages on the server
+        var query = messagesRef.orderByChild("timestamp").limitToLast(25);
+        // the $firebaseArray service properly handles database queries as well
+        $scope.filteredMessages = $firebaseArray(query);
+      }
+    ]);
+  ``` 
+  Add it info to a list view
+  ```html
+  <ul>
+    <li ng-repeat="message in messages">{{ message.user }}: {{ message.text }}</li>
+  </ul>
+  ```
+  Add a remove button (delete items from the array
+  ```html
+    <ul>
+      <li ng-repeat="message in messages">
+        Message data located at node /messages/{{ message.$id }}
+      </li>
+    </ul>
+  ```
+  
+  Reference and Summary API
+  
+  | API Method  | Method Description |
+  | ------------- | ------------- |
+  | [$add(data)](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-addnewdata)  | Creates a new record in the array. Should be used in place of push() orsplice().  |
+  | [$remove(recordOrIndex)](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-removerecordorindex)  | Removes an existing item from the array. Should be used in place ofpop() or splice().  |
+  | [$save(recordOrIndex)](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-saverecordorindex)  | Saves an existing item in the array.  |
+  | [$getRecord(key)](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-getrecordkey)  | Given a Firebase database key, returns the corresponding item from the array. It is also possible to find the index with $indexFor(key).  |
