@@ -60,9 +60,29 @@ To add & sync objects we use $array ``` $firebaseArray ```
 <br>
 ### IMPORTANT mentions for AngularFire
 
+The AngularFire Objects and methods reference are available on [https://github.com/firebase/angularfire/blob/master/docs/reference.md](https://github.com/firebase/angularfire/blob/master/docs/reference.md)
 1. AngularFire is also not ideal for synchronizing deeply nested collections inside of collections. In general, deeply nested collections [should typically be avoided](https://www.firebase.com/docs/web/guide/structuring-data.html#section-denormalizing-data) in distributed systems.
 2. The primary purpose of AngularFire is to __manage synchronized data__, which is exposed through the ```$firebaseObject``` and ```$firebaseArray```.
-3. __MOST IMPORTANT__: The AngularFire doesn't have a callback defined by the dev, it is a AngularFire inside feature. To print it value we doesn't use console, use angular json filter.
+3. To keep the user session on angularFire requests we need to use it angularFire auths methods ``` $firebaseAuth ```
+  ```javascript
+    // Let's use AngularFire to auth the user to keep it session
+    auth = $firebaseAuth();
+    $scope.loginData = {
+      email: '',
+      password: ''
+    };
+    
+    $scope.doLogin = function() {
+      auth.$signInWithEmailAndPassword($scope.loginData.email, $scope.loginData.password).then(function(fireUser) {
+        $rootScope.user = fireUser;
+      }).catch(function(error){
+        console.log(error);
+      });
+    });
+  ```
+
+
+4. __MOST IMPORTANT__: The AngularFire doesn't have a callback defined by the dev, it is a AngularFire inside feature. To print it value we doesn't use console, use angular json filter.
   ```javascript
     var ref = new Firebase("https://<YOUR-FIREBASE-APP>.firebaseio.com");
     $scope.data = $firebaseObject(ref);
@@ -73,7 +93,7 @@ To add & sync objects we use $array ``` $firebaseArray ```
   ```html
     <pre>{{ data | json }}</pre>
   ```
-4. Sometimes we need just the Firebase web, not the AngularFire:
+5. Sometimes we need just the Firebase web, not the AngularFire:
   ```javascript
     var ref = new Firebase("https://<YOUR-FIREBASE-APP>.firebaseio.com");
     // We don't always need AngularFire!
@@ -84,7 +104,7 @@ To add & sync objects we use $array ``` $firebaseArray ```
       return (currentValue || 0) + 1;
     });
   ```
-5. If using the FirebaseWeb SDK (not AngularFire) sync: 
+6. If using the FirebaseWeb SDK (not AngularFire) sync: 
   ```javascript
     var ref = new Firebase("https://<YOUR-FIREBASE-APP>.firebaseio.com");
     ref.on("value", function(snapshot) {
@@ -97,7 +117,7 @@ To add & sync objects we use $array ``` $firebaseArray ```
       });
     });
   ```
-6. When ``` $firebaseArray ``` might be used:
+7. When ``` $firebaseArray ``` might be used:
   Synchronized arrays should be used for any list of objects that will be sorted, iterated, and which have unique IDs. The synchronized array assumes that items are added using [$add()](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-addnewdata), and that they will therefore be keyed using Firebase [push IDs](https://www.firebase.com/docs/web/guide/saving-data.html#section-push).
   We create a synchronized array with the $firebaseArray service. The array is sorted [in the same order](https://www.firebase.com/docs/web/guide/retrieving-data.html#section-ordered-data) as the records on the server. In other words, we can pass a [query](https://www.firebase.com/docs/web/guide/retrieving-data.html#section-queries) into the synchronized array, and the records will be sorted according to query criteria.
   While the array isn't technically read-only, it has some special requirements for modifying the structure (removing and adding items) which we will cover below.
@@ -134,11 +154,15 @@ To add & sync objects we use $array ``` $firebaseArray ```
     </ul>
   ```
   
-  Reference and Summary API
-  
-  | API Method  | Method Description |
-  | ------------- | ------------- |
-  | [$add(data)](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-addnewdata)  | Creates a new record in the array. Should be used in place of push() orsplice().  |
-  | [$remove(recordOrIndex)](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-removerecordorindex)  | Removes an existing item from the array. Should be used in place ofpop() or splice().  |
-  | [$save(recordOrIndex)](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-saverecordorindex)  | Saves an existing item in the array.  |
-  | [$getRecord(key)](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-getrecordkey)  | Given a Firebase database key, returns the corresponding item from the array. It is also possible to find the index with $indexFor(key).  |
+##### Reference and Summary API
+--------------------------------
+| API Method  | Method Description |
+| ------------- | ------------- |
+| [$add(data)](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-addnewdata)  | Creates a new record in the array. Should be used in place of push() orsplice().  |
+| [$remove(recordOrIndex)](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-removerecordorindex)  | Removes an existing item from the array. Should be used in place ofpop() or splice().  |
+| [$save(recordOrIndex)](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-saverecordorindex)  | Saves an existing item in the array.  |
+| [$getRecord(key)](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-getrecordkey)  | Given a Firebase database key, returns the corresponding item from the array. It is also possible to find the index with $indexFor(key).  |
+
+
+##### Meta fields
+--------------------------------

@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+.controller('AppCtrl', function($scope, $rootScope, $state) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -9,45 +9,25 @@ angular.module('starter.controllers', [])
   //$scope.$on('$ionicView.enter', function(e) {
   //});
 
-  // Form data for the login modal
-  $scope.loginData = {};
-
-  // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/login.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
-
-  // Triggered in the login modal to close it
-  $scope.closeLogin = function() {
-    $scope.modal.hide();
-  };
-
-  // Open the login modal
-  $scope.login = function() {
-    $scope.modal.show();
-  };
-
-  // Perform the login action when the user submits the login form
-  $scope.doLogin = function() {
-    console.log('Doing login', $scope.loginData);
-
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
-      $scope.closeLogin();
-    }, 1000);
-  };
+  // Check currentUser, if no currentUser it redirect to sign page
+  var login_state = 'app.login';
+  var currentUser = firebase.auth().currentUser;
+  window.currentUser = currentUser;
+  if(currentUser == null && $state.current.name != login_state) {
+    $state.go(login_state);
+  }
 })
 
-.controller('LoginCtrl', function($scope, $rootScope, $ionicViewService, $ionicSideMenuDelegate, $ionicLoading, $state) {
+.controller('LoginCtrl', function($scope, $rootScope, $ionicViewService, $ionicSideMenuDelegate, $ionicLoading, $firebaseAuth, $state) {
   // Prevent swipe side menu from Login
   $ionicSideMenuDelegate.canDragContent(false);
+  // Let's use AngularFire to auth the user to keep it session
+  auth = $firebaseAuth();
 
   // Default login info just to be faster
   $scope.loginData = {
-    email: 'ton.garcia.jr@gmail.com'
+    email: 'ton.garcia.jr@gmail.com',
+    password: ''
   };
 
   $scope.doLogin = function() {
@@ -55,17 +35,11 @@ angular.module('starter.controllers', [])
       template: 'Autenticando...'
     }).then(function(){
       // The loading indicator is now displayed
-      firebase.auth().signInWithEmailAndPassword($scope.loginData.email, $scope.loginData.password).catch(function(error, authData){
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        alert(`${errorCode} - ${errorMessage}`);
-        console.log(errorCode, errorMessage);
-      }).then(function (response) {
+      auth.$signInWithEmailAndPassword($scope.loginData.email, $scope.loginData.password).then(function(fireUser) {
         // Sign user
         $ionicLoading.hide();
-        if(response == undefined) return;
-        $rootScope.user = firebase.auth().currentUser;
+        if(fireUser == undefined) return;
+        $rootScope.user = fireUser;
 
         // Prevent back button after login
         $ionicViewService.nextViewOptions({
@@ -75,12 +49,19 @@ angular.module('starter.controllers', [])
 
         // Go to signed page
         $state.go('app.playlists');
+      }).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        alert(`${errorCode} - ${errorMessage}`);
+        console.log(errorCode, errorMessage);
       });
     });
   }
 })
 
-.controller('PlaylistsCtrl', function($scope, Playlists) {
+.controller('PlaylistsCtrl', function($scope, $rootScope, Playlists) {
+  console.log($rootScope.test);
   $scope.playlists = Playlists;
 
   $scope.createPlaylist = function() {

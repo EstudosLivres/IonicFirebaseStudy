@@ -1,7 +1,12 @@
 angular.module('starter.factories', [])
 .factory("Playlists", function($firebaseArray) {
-  // var playlistsRef = new Firebase(`${fire_base_server}/playlists`);
-  // return $firebaseArray(playlistsRef);
+  var getAll = function() {
+    var fireRef = firebase.database().ref();
+    var playlistsRef = fireRef.child("playlists");
+    return $firebaseArray(playlistsRef);
+  };
 
-  return null;
+  return {
+    getAll: getAll
+  };
 });

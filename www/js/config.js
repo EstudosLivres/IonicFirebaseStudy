@@ -8,6 +8,7 @@ fireBaseSettings = {
 };
 
 // Initialize firebase
+firebase_ref = new Firebase(fire_base_server);
 firebase.initializeApp(fireBaseSettings);
 
 // Init current user as global
