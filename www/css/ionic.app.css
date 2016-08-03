@@ -9825,3 +9825,6 @@ a.button {
   -webkit-box-align: center;
   -webkit-align-items: center;
   align-items: center; }
+
+center {
+  width: 100% !important; }

@@ -39,6 +39,7 @@ angular.module('starter.controllers', [])
         // Sign user
         $ionicLoading.hide();
         if(fireUser == undefined) return;
+        window.user  = fireUser;
         $rootScope.user = fireUser;
 
         // Prevent back button after login
@@ -60,7 +61,10 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('PlaylistsCtrl', function($scope, $rootScope, Playlists) {
+.controller('PlaylistsCtrl', function($scope, $rootScope, $ionicSideMenuDelegate, Playlists) {
+  // Enable swipe side menu, which was disabled on login
+  $ionicSideMenuDelegate.canDragContent(true);
+
   // Retrieve all playlists for it user
   $scope.playlists = Playlists.getAll();
 
@@ -68,9 +72,7 @@ angular.module('starter.controllers', [])
   $scope.createPlaylist = function() {
     var name = prompt("Playlist name");
     if (name) {
-      $scope.playlists.$add({
-        "name": name
-      });
+      Playlists.create($scope, {name: name});
     }
   };
 })

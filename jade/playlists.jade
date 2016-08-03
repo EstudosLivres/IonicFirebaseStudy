@@ -1,4 +1,9 @@
 ion-view(view-title="Playlists")
   ion-content
     ion-list
-      ion-item(ng-repeat="playlist in playlists" href="#/app/playlists/{{playlist.id}}") {{playlist.title}}
+      ion-item(ng-repeat="playlist in playlists" href="#/app/playlists/{{playlist.id}}") {{playlist.name}}
+
+    ion-footer-bar
+      center
+        button.button.button-clear.button-calm(ng-click="createPlaylist()")
+          i.ion-plus-round
