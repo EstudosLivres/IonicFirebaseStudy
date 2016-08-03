@@ -61,9 +61,10 @@ angular.module('starter.controllers', [])
 })
 
 .controller('PlaylistsCtrl', function($scope, $rootScope, Playlists) {
-  console.log($rootScope.test);
-  $scope.playlists = Playlists;
+  // Retrieve all playlists for it user
+  $scope.playlists = Playlists.getAll();
 
+  // Create a new playlist method
   $scope.createPlaylist = function() {
     var name = prompt("Playlist name");
     if (name) {

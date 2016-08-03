@@ -1,5 +1,5 @@
 ion-view(hide-nav-bar="true")
-  ion-content
+  ion-content.content-center
     form(ng-submit="doLogin()" autocomplete="off")
       .list
         label.item.item-input
@@ -8,5 +8,6 @@ ion-view(hide-nav-bar="true")
         label.item.item-input
           span.input-label Password
           input(type="password" ng-model="loginData.password" autocomplete="off")
-        label.item
-          button.button.button-block.button-positive(type="submit") Log in
+
+      .padding
+        button.button.button-block.button-positive(type="submit") Log in
