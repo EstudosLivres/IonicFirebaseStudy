@@ -1,10 +1,12 @@
 angular.module('starter.factories', [])
 .factory("Playlists", function($firebaseArray) {
+  // Current user Playlists ref
+  var currentUserPlaylistsRef = currentUserRef('playlists');
+
   // Retrieve all playlists
   var getAll = function() {
-    var fireRef = firebase.database().ref();
-    var playlistsRef = fireRef.child("playlists");
-    return $firebaseArray(playlistsRef);
+    // just return it current user playlists ref array
+    return $firebaseArray(currentUserPlaylistsRef);
   };
 
   // Create a playlist
