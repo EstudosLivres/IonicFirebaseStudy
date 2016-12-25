@@ -1,3 +1,11 @@
+Firebase Study
+=============
+
+Using [__Ionic v1__](http://ionicframework.com/docs/v1/), [__AngularFire__](https://github.com/firebase/angularfire) and [__Querybase__](https://github.com/davideast/Querybase) to create a 
+simple playlist example app with session management.
+
+
+
 Firebase Auth
 =============
 
