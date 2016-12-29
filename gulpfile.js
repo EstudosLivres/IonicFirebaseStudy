@@ -6,16 +6,16 @@ var sass = require('gulp-sass');
 var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var sh = require('shelljs');
-var jade = require('gulp-jade');
+var pug = require('gulp-pug');
 
 var paths = {
   sass: ['./scss/**/*.scss'],
-  jade: ['./jade/**/*.jade']
+  pug: ['./pug/**/*.pug']
 };
 
-gulp.task('default', ['sass', 'jade']);
+gulp.task('default', ['sass', 'pug']);
 
-gulp.task('sass', function(done) {
+gulp.task('sass', function (done) {
   gulp.src('./scss/ionic.app.scss')
     .pipe(sass())
     .on('error', sass.logError)
@@ -23,31 +23,31 @@ gulp.task('sass', function(done) {
     .pipe(minifyCss({
       keepSpecialComments: 0
     }))
-    .pipe(rename({ extname: '.min.css' }))
+    .pipe(rename({extname: '.min.css'}))
     .pipe(gulp.dest('./www/css/'))
     .on('end', done);
 });
 
-gulp.task('watch', function() {
-  gulp.watch(paths.sass, ['sass']);
-  gulp.watch(paths.jade, ['jade']);
-});
-
-gulp.task('jade', function (done) {
-  gulp.src(paths.jade)
-    .pipe(jade())
-    .pipe(gulp.dest('./www/templates/'))
+gulp.task('pug', function (done) {
+  gulp.src('./pug/**/*.pug')
+    .pipe(pug())
+    .pipe(gulp.dest('./www/templates'))
     .on('end', done);
 });
 
-gulp.task('install', ['git-check'], function() {
+gulp.task('watch', function () {
+  gulp.watch(paths.sass, ['sass']);
+  gulp.watch(paths.pug, ['pug']);
+});
+
+gulp.task('install', ['git-check'], function () {
   return bower.commands.install()
-    .on('log', function(data) {
+    .on('log', function (data) {
       gutil.log('bower', gutil.colors.cyan(data.id), data.message);
     });
 });
 
-gulp.task('git-check', function(done) {
+gulp.task('git-check', function (done) {
   if (!sh.which('git')) {
     console.log(
       '  ' + gutil.colors.red('Git is not installed.'),
@@ -59,3 +59,6 @@ gulp.task('git-check', function(done) {
   }
   done();
 });
+
+// fix ionic2 CLI Gulp bug
+gulp.task('serve:before', ['default', 'watch']);

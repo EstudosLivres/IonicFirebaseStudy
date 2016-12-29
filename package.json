@@ -1,19 +1,22 @@
 {
-  "name": "ionic-project",
+  "name": "factory-fire",
   "version": "1.1.1",
-  "description": "An Ionic project",
+  "description": "FactoryFire: An Ionic project",
   "dependencies": {
+    "angular": "^1.5.8",
+    "angularfire": "^2.1.0",
+    "firebase": "^3.5.3",
     "gulp": "^3.5.6",
     "gulp-concat": "^2.2.0",
-    "gulp-jade": "^1.1.0",
     "gulp-minify-css": "^0.3.0",
+    "gulp-pug": "^3.1.0",
     "gulp-rename": "^1.2.0",
     "gulp-sass": "^2.0.4",
-    "jade": "^1.11.0"
+    "ionic-native-transitions": "^1.0.2",
+    "pug": "^2.0.0-beta6"
   },
   "devDependencies": {
     "bower": "^1.3.3",
-    "gulp-jade": "^1.1.0",
     "gulp-util": "^2.2.14",
     "shelljs": "^0.3.0"
   },
@@ -26,6 +29,17 @@
     "ionic-plugin-keyboard"
   ],
   "cordovaPlatforms": [
-    "android"
+    "ios",
+    {
+      "platform": "ios",
+      "version": "",
+      "locator": "ios"
+    },
+    "android",
+    {
+      "platform": "android",
+      "version": "6.1.0",
+      "locator": "android"
+    }
   ]
 }

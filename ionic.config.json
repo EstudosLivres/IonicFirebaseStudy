@@ -1,10 +1,28 @@
 {
   "name": "FirebaseStudy",
   "app_id": "37ecfc7d",
+  "v2": false,
+  "typescript": false,
   "email": "ton.garcia.jr@gmail.com",
   "package_name": "IonicFirebaseStudy",
+  "watch": {
+    "sass": [
+      "scss/**/*.scss"
+    ],
+    "html": [
+      "www/**/*.html"
+    ],
+    "pug": [
+      "pug/*.pug"
+    ],
+    "livereload": [
+      "www/**/*.html",
+      "www/**/*.js",
+      "www/**/*.css"
+    ]
+  },
   "gulpStartupTasks": [
-    "jade",
+    "pug",
     "sass",
     "watch"
   ]

@@ -9828,3 +9828,7 @@ a.button {
 
 center {
   width: 100% !important; }
+
+.item-floating-label,
+.list .item.item-floating-label {
+  padding: 0; }

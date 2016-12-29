@@ -23,3 +23,9 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 
 // Include my templates custom styles
 @import "templates/login";
+
+
+.item-floating-label,
+.list .item.item-floating-label {
+  padding: 0;
+}

@@ -1,0 +1,16 @@
+ion-view(hide-nav-bar="true")
+  ion-content.content-center
+    form(ng-submit="doLogin()" autocomplete="off")
+      .list
+        label.item.item-input.item-floating-label
+          span.input-label E-mail
+          input(type="text" ng-model="loginData.email" placeholder="E-mail" autocomplete="off")
+        label.item.item-input.item-floating-label
+          span.input-label Password
+          input(type="password" ng-model="loginData.password" placeholder="Password" autocomplete="off")
+
+      .padding
+        button.button.button-block.button-positive(type="submit") Sign In
+
+      .padding
+        button.button.button-block.button-clear.button-positive(type="submit") Anonymous Mode
